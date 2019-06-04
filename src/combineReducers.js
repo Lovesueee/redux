@@ -126,7 +126,7 @@ export default function combineReducers(reducers) {
         warning(`No reducer provided for key "${key}"`)
       }
     }
-
+    // 过滤 reducer 是 function
     if (typeof reducers[key] === 'function') {
       finalReducers[key] = reducers[key]
     }
@@ -146,6 +146,7 @@ export default function combineReducers(reducers) {
   }
 
   return function combination(state = {}, action) {
+    // 检测 reducer 是否返回 default state
     if (shapeAssertionError) {
       throw shapeAssertionError
     }

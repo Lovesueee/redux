@@ -53,6 +53,8 @@ export default function createStore(reducer, preloadedState, enhancer) {
   let isDispatching = false
 
   function ensureCanMutateNextListeners() {
+    // 拷贝一份出来，修改nextListeners不影响currentListeners
+    // 即不会影响循环的执行
     if (nextListeners === currentListeners) {
       nextListeners = currentListeners.slice()
     }
@@ -188,6 +190,8 @@ export default function createStore(reducer, preloadedState, enhancer) {
       isDispatching = false
     }
 
+    // nextListers 的存在是防止回调过程中，还进行 subscribe/unsubscribe
+    // （如果是应用，就将会出现意想不到的结果)
     const listeners = (currentListeners = nextListeners)
     for (let i = 0; i < listeners.length; i++) {
       const listener = listeners[i]
@@ -258,6 +262,7 @@ export default function createStore(reducer, preloadedState, enhancer) {
   // When a store is created, an "INIT" action is dispatched so that every
   // reducer returns their initial state. This effectively populates
   // the initial state tree.
+  // 初始化 state tree
   dispatch({ type: ActionTypes.INIT })
 
   return {
